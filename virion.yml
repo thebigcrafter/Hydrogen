@@ -1,0 +1,5 @@
+name: Hydrogen
+version: 1.0.0
+author: thebigcrafter
+api: [5.0.0]
+antigen: thebigcrafter\Hydrogen
