@@ -11,6 +11,16 @@ declare(strict_types=1);
 
 namespace thebigcrafter\Hydrogen;
 
-use pocketmine\plugin\PluginBase;
+use pocketmine\plugin\Plugin;
+use pocketmine\Server;
+use thebigcrafter\Hydrogen\tasks\CheckUpdatesTask;
 
-class Hydrogen extends PluginBase {}
+class Hydrogen {
+	/**
+	 * Notify if an update is available on Poggit.
+	 */
+	public static function checkForUpdates(Plugin $plugin) : void
+	{
+		Server::getInstance()->getAsyncPool()->submitTask(new CheckUpdatesTask($plugin->getName(), $plugin->getDescription()->getVersion()));
+	}
+}
