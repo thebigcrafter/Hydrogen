@@ -21,9 +21,9 @@ class HConfig {
 	/**
 	 * Check config file version
 	 */
-	public static function verifyConfigVersion(Config $config, string $version) : bool {
+	public static function verifyConfigVersion(Config $config, string $version, string $configKey = "config-version") : bool {
 		/** @var string $currentVersion */
-		$currentVersion = $config->get("version");
+		$currentVersion = $config->get($configKey);
 
 		if(version_compare($currentVersion, $version, "<>")) {
 			return true;
