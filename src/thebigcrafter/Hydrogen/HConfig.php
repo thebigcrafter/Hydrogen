@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace thebigcrafter\Hydrogen;
 
-use pocketmine\plugin\Plugin;
 use pocketmine\utils\Config;
 use function copy;
 use function rename;
@@ -22,7 +21,7 @@ class HConfig {
 	/**
 	 * Check config file version
 	 */
-	public static function verifyConfigVersion(Plugin $plugin, Config $config, string $version) : bool {
+	public static function verifyConfigVersion(Config $config, string $version) : bool {
 		/** @var string $currentVersion */
 		$currentVersion = $config->get("version");
 
