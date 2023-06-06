@@ -26,9 +26,9 @@ class HConfig {
 		$currentVersion = $config->get("version");
 
 		if(version_compare($currentVersion, $version, "<>")) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
