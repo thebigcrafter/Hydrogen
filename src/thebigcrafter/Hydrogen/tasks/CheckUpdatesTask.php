@@ -18,7 +18,7 @@ use function json_decode;
 use function version_compare;
 
 class CheckUpdatesTask extends AsyncTask {
-	public function __construct(private string $name, private string $version)
+	public function __construct(private readonly string $name, private readonly string $version)
 	{
 	}
 
