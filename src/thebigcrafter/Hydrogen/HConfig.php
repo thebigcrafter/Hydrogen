@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace thebigcrafter\Hydrogen;
 
+use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use function copy;
 use function rename;
 use function unlink;
 use function version_compare;
@@ -25,7 +25,7 @@ class HConfig {
 		/** @var string $currentVersion */
 		$currentVersion = $config->get($configKey);
 
-		if(version_compare($currentVersion, $version, "<>")) {
+		if (version_compare($currentVersion, $version, "<>")) {
 			return true;
 		}
 		return false;
@@ -34,18 +34,21 @@ class HConfig {
 	/**
 	 * Reset config file by using a template file
 	 */
-	public static function resetConfig(string $templatePath, string $configPath, bool $hardReset = false) : bool {
-		if($hardReset) {
-			if(unlink($configPath) && copy($templatePath, $configPath)) {
+	public static function resetConfig(PluginBase $plugin, bool $hardReset = false) : bool {
+		if ($hardReset) {
+			if (unlink($plugin->getDataFolder() . "config.yml")) {
+				$plugin->saveDefaultConfig();
+				$plugin->getConfig()->reload();
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			if(rename($configPath, $configPath . "_old") && copy($templatePath, $configPath)) {
+			if (rename($plugin->getDataFolder() . "config.yml", $plugin->getDataFolder() . "config_old.yml")) {
+				$plugin->saveDefaultConfig();
+				$plugin->getConfig()->reload();
 				return true;
 			}
-
 			return false;
 		}
 	}
