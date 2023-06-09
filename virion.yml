@@ -1,5 +1,6 @@
 name: Hydrogen
 version: 1.0.0
+php: [8.1]
 author: thebigcrafter
 api: [5.0.0]
 antigen: thebigcrafter\Hydrogen
