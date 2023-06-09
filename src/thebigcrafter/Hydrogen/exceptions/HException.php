@@ -11,4 +11,5 @@ declare(strict_types=1);
 
 namespace thebigcrafter\Hydrogen\exceptions;
 
-class HException extends \Exception {}
+class HException extends \Exception {
+}

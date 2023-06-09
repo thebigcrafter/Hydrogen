@@ -18,12 +18,10 @@ use function json_decode;
 use function version_compare;
 
 class CheckUpdatesTask extends AsyncTask {
-	public function __construct(private readonly string $name, private readonly string $version)
-	{
+	public function __construct(private readonly string $name, private readonly string $version) {
 	}
 
-	public function onRun() : void
-	{
+	public function onRun() : void {
 		$res = Internet::getURL("https://poggit.pmmp.io/releases.min.json?name=" . $this->name, 10, [], $err);
 
 		$highestVersion = $this->version;
@@ -49,8 +47,7 @@ class CheckUpdatesTask extends AsyncTask {
 		$this->setResult([$highestVersion, $artifactUrl, $err]);
 	}
 
-	public function onCompletion() : void
-	{
+	public function onCompletion() : void {
 		/**
 		 * @var string $highestVersion
 		 * @var string $artifactUrl
