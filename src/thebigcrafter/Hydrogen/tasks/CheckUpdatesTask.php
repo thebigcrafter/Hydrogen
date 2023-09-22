@@ -65,7 +65,6 @@ class CheckUpdatesTask extends AsyncTask {
 		if ($highestVersion !== $this->version) {
 			$artifactUrl .= "/{$this->name}_{$highestVersion}.phar";
 			$logger->notice("{$this->name} v{$highestVersion} is available for download at {$artifactUrl}");
-			return;
 		}
 	}
 }

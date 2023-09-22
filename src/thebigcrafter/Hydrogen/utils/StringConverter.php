@@ -21,8 +21,7 @@ class StringConverter {
 	/**
 	 * @throws HException
 	 */
-	public static function stringToItem(int $id, int $meta) : Item
-	{
+	public static function stringToItem(int $id, int $meta) : Item {
 		$item = StringToItemParser::getInstance()->parse($id . ":" . $meta);
 
 		if ($item === null) {
@@ -39,8 +38,7 @@ class StringConverter {
 	/**
 	 * @throws HException
 	 */
-	public static function stringToBlock(int $id, int $meta) : Block
-	{
+	public static function stringToBlock(int $id, int $meta) : Block {
 		$item = StringToItemParser::getInstance()->parse($id . ":" . $meta);
 
 		if ($item === null) {

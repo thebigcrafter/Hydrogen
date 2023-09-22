@@ -14,13 +14,11 @@ namespace thebigcrafter\Hydrogen\utils;
 use function floor;
 use function strcmp;
 
-class ArrayUtils
-{
+class ArrayUtils {
 	/**
 	 * @param array<string> $arr
 	 */
-	public static function binarySearch(array $arr, string $target, int $left, int $right) : int
-	{
+	public static function binarySearch(array $arr, string $target, int $left, int $right) : int {
 		if ($left <= $right) {
 			$middle = (int) floor(($left + $right) / 2);
 			$result = strcmp($arr[$middle], $target);

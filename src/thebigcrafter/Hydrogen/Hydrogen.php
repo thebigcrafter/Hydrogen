@@ -16,6 +16,7 @@ use pocketmine\Server;
 use thebigcrafter\Hydrogen\tasks\CheckUpdatesTask;
 
 class Hydrogen {
+
 	/**
 	 * Notify if an update is available on Poggit.
 	 */
