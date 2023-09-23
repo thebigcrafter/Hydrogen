@@ -42,7 +42,7 @@ final class EventLoop
 
 		try {
 			/** @psalm-suppress InternalClass */
-			self::$driver = new class  extends AbstractDriver {
+			self::$driver = new class extends AbstractDriver {
 				protected function activate(array $callbacks) : void
 				{
 					throw new \Error("Can't activate callback during garbage collection.");
