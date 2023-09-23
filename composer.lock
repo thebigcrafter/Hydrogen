@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03b96cbceedb504ba98370e14aa99338",
+    "content-hash": "03353ce48c066607f982b5f6db9cd3ed",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -119,52 +119,6 @@
                 }
             ],
             "time": "2023-01-15T23:15:59+00:00"
-        },
-        {
-            "name": "dktapps/pmforms",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dktapps-pm-pl/pmforms.git",
-                "reference": "ea46df4e4c73675010fa860be5db6fbda60a85d4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dktapps-pm-pl/pmforms/zipball/ea46df4e4c73675010fa860be5db6fbda60a85d4",
-                "reference": "ea46df4e4c73675010fa860be5db6fbda60a85d4",
-                "shasum": ""
-            },
-            "require": {
-                "pocketmine/pocketmine-mp": "^4.0.0 || ^5.0.0"
-            },
-            "require-dev": {
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.2.0",
-                "phpstan/phpstan-strict-rules": "^1.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "virion": {
-                    "spec": "3.0",
-                    "namespace-root": "dktapps\\pmforms"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0"
-            ],
-            "description": "Form API library for PocketMine-MP plugins",
-            "support": {
-                "issues": "https://github.com/dktapps-pm-pl/pmforms/issues",
-                "source": "https://github.com/dktapps-pm-pl/pmforms/tree/master"
-            },
-            "time": "2023-08-15T19:02:00+00:00"
         },
         {
             "name": "pocketmine/bedrock-block-upgrade-schema",
@@ -3007,9 +2961,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "dktapps/pmforms": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
