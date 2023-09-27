@@ -13,9 +13,11 @@ namespace thebigcrafter\Hydrogen;
 
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
+use pocketmine\utils\InternetException;
 use thebigcrafter\Hydrogen\future\Future;
 use thebigcrafter\Hydrogen\future\FutureState;
 use thebigcrafter\Hydrogen\tasks\CheckUpdatesTask;
+use thebigcrafter\Hydrogen\utils\Internet;
 
 class Hydrogen
 {
@@ -23,20 +25,51 @@ class Hydrogen
 	/**
 	 * Notify if an update is available on Poggit.
 	 */
-	public static function checkForUpdates(Plugin $plugin) : void
+	public static function checkForUpdates(Plugin $plugin): void
 	{
-		Server::getInstance()->getAsyncPool()->submitTask(new CheckUpdatesTask($plugin->getName(), $plugin->getDescription()->getVersion()));
+
+		$logger = Server::getInstance()->getLogger();
+		$highestVersion = $plugin->getDescription()->getVersion();
+		$artifactUrl = "";
+
+		try {
+			$res = Internet::fetch("https://poggit.pmmp.io/releases.min.json?name=" . $plugin->getName())->await();
+		} catch (InternetException $e) {
+			Server::getInstance()->getLogger()->debug($e);
+		}
+
+		$releases = (array) json_decode($res, true);
+
+		if ($releases !== null) {
+			/**
+			 * @var array{'version': string, 'artifact_url': string} $release
+			 */
+			foreach ($releases as $release) {
+				if (version_compare($highestVersion, $release["version"], ">=")) {
+					continue;
+				}
+
+				$highestVersion = $release["version"];
+				$artifactUrl = $release["artifact_url"];
+			}
+		}
+
+		if ($highestVersion !== $plugin->getDescription()->getVersion()) {
+			$artifactUrl .= "/{$plugin->getDescription()->getName()}_{$highestVersion}.phar";
+			$logger->notice("{$plugin->getDescription()->getName()} v{$highestVersion} is available for download at {$artifactUrl}");
+		}
+
 	}
 
 	/**
 	 * Creates a new fiber asynchronously using the given closure, returning a Future that is completed with the
 	 * eventual return value of the passed function or will fail if the closure throws an exception.
 	 */
-	public static function async(\Closure $closure, mixed ...$args) : Future
+	public static function async(\Closure $closure, mixed ...$args): Future
 	{
 		static $run = null;
 
-		$run ??= static function (FutureState $state, \Closure $closure, array $args) : void {
+		$run ??= static function (FutureState $state, \Closure $closure, array $args): void {
 			$s = $state;
 			$c = $closure;
 
