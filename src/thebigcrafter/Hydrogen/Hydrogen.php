@@ -14,10 +14,13 @@ namespace thebigcrafter\Hydrogen;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 use pocketmine\utils\InternetException;
+use thebigcrafter\Hydrogen\exceptions\Cancellation;
+use thebigcrafter\Hydrogen\exceptions\CancelledException;
 use thebigcrafter\Hydrogen\future\Future;
 use thebigcrafter\Hydrogen\future\FutureState;
-use thebigcrafter\Hydrogen\tasks\CheckUpdatesTask;
 use thebigcrafter\Hydrogen\utils\Internet;
+use function json_decode;
+use function version_compare;
 
 class Hydrogen
 {
@@ -25,7 +28,7 @@ class Hydrogen
 	/**
 	 * Notify if an update is available on Poggit.
 	 */
-	public static function checkForUpdates(Plugin $plugin): void
+	public static function checkForUpdates(Plugin $plugin) : void
 	{
 
 		$logger = Server::getInstance()->getLogger();
@@ -65,11 +68,11 @@ class Hydrogen
 	 * Creates a new fiber asynchronously using the given closure, returning a Future that is completed with the
 	 * eventual return value of the passed function or will fail if the closure throws an exception.
 	 */
-	public static function async(\Closure $closure, mixed ...$args): Future
+	public static function async(\Closure $closure, mixed ...$args) : Future
 	{
 		static $run = null;
 
-		$run ??= static function (FutureState $state, \Closure $closure, array $args): void {
+		$run ??= static function (FutureState $state, \Closure $closure, array $args) : void {
 			$s = $state;
 			$c = $closure;
 
@@ -89,4 +92,32 @@ class Hydrogen
 		return new Future($state);
 	}
 
+	/**
+	 * Non-blocking sleep for the specified number of seconds.
+	 *
+	 * @param float             $timeout      Number of seconds to wait.
+	 * @param bool              $reference    If false, unreference the underlying watcher.
+	 * @param Cancellation|null $cancellation Cancel waiting if cancellation is requested.
+	 */
+	function delay(float $timeout, bool $reference = true, ?Cancellation $cancellation = null) : void
+	{
+		$suspension = EventLoop::getSuspension();
+		$callbackId = EventLoop::delay($timeout, static fn() => $suspension->resume());
+		$cancellationId = $cancellation?->subscribe(
+			static fn(CancelledException $exception) => $suspension->throw($exception)
+		);
+
+		if (!$reference) {
+			EventLoop::unreference($callbackId);
+		}
+
+		try {
+			$suspension->suspend();
+		} finally {
+			EventLoop::cancel($callbackId);
+
+			/** @psalm-suppress PossiblyNullArgument $cancellationId will not be null if $cancellation is not null. */
+			$cancellation?->unsubscribe($cancellationId);
+		}
+	}
 }
