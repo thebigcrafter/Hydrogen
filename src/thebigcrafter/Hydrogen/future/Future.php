@@ -17,9 +17,6 @@ use thebigcrafter\Hydrogen\trait\ForbidCloning;
 use thebigcrafter\Hydrogen\trait\ForbidSerialization;
 use function is_array;
 
-/**
- * @template-covariant T
- */
 final class Future
 {
 	use ForbidCloning;
@@ -27,20 +24,11 @@ final class Future
 
 	/**
 	 * Iterate over the given futures in completion order.
-	 *
-	 * @template Tk
-	 * @template Tv
-	 *
-	 * @param iterable<Tk, Future<Tv>> $futures
-	 * @param Cancellation|null        $cancellation Optional cancellation.
-	 *
-	 * @return iterable<Tk, Future<Tv>>
 	 */
 	public static function iterate(iterable $futures, ?Cancellation $cancellation = null) : iterable
 	{
 		$iterator = new FutureIterator($cancellation);
 
-		// Directly iterate in case of an array, because there can't be suspensions during iteration
 		if (is_array($futures)) {
 			foreach ($futures as $key => $future) {
 				if (!$future instanceof self) {
@@ -50,8 +38,6 @@ final class Future
 			}
 			$iterator->complete();
 		} else {
-			// Use separate fiber for iteration over non-array, because not all items might be immediately available
-			// while other futures are already completed.
 			EventLoop::queue(static function () use ($futures, $iterator) : void {
 				try {
 					foreach ($futures as $key => $future) {
@@ -72,13 +58,6 @@ final class Future
 		}
 	}
 
-	/**
-	 * @template Tv
-	 *
-	 * @param Tv $value
-	 *
-	 * @return Future<Tv>
-	 */
 	public static function complete(mixed $value = null) : self
 	{
 		$state = new FutureState();
@@ -99,21 +78,15 @@ final class Future
 		return new self($state);
 	}
 
-	/** @var FutureState<T> */
 	private readonly FutureState $state;
 
-	/**
-	 * @param FutureState<T> $state
-	 *
-	 * @internal Use {@see DeferredFuture} or {@see async()} to create and resolve a Future.
-	 */
 	public function __construct(FutureState $state)
 	{
 		$this->state = $state;
 	}
 
 	/**
-	 * @return bool True if the operation has completed.
+	 * True if the operation has completed.
 	 */
 	public function isComplete() : bool
 	{
@@ -122,8 +95,6 @@ final class Future
 
 	/**
 	 * Do not forward unhandled errors to the event loop handler.
-	 *
-	 * @return Future<T>
 	 */
 	public function ignore() : self
 	{
@@ -135,14 +106,6 @@ final class Future
 	/**
 	 * Attaches a callback that is invoked if this future completes. The returned future is completed with the return
 	 * value of the callback, or errors with an exception thrown from the callback.
-	 *
-	 * @psalm-suppress InvalidTemplateParam
-	 *
-	 * @template Tr
-	 *
-	 * @param \Closure(T):Tr $map
-	 *
-	 * @return Future<Tr>
 	 */
 	public function map(\Closure $map) : self
 	{
@@ -168,12 +131,6 @@ final class Future
 	/**
 	 * Attaches a callback that is invoked if this future errors. The returned future is completed with the return
 	 * value of the callback, or errors with an exception thrown from the callback.
-	 *
-	 * @template Tr
-	 *
-	 * @param \Closure(\Throwable):Tr $catch
-	 *
-	 * @return Future<Tr>
 	 */
 	public function catch(\Closure $catch) : self
 	{
@@ -199,10 +156,6 @@ final class Future
 	 * Attaches a callback that is always invoked when the future is completed. The returned future resolves with the
 	 * same value as this future once the callback has finished execution. If the callback throws, the returned future
 	 * will error with the thrown exception.
-	 *
-	 * @param \Closure():void $finally
-	 *
-	 * @return Future<T>
 	 */
 	public function finally(\Closure $finally) : self
 	{
@@ -229,8 +182,6 @@ final class Future
 	 * Awaits the operation to complete.
 	 *
 	 * Throws an exception if the operation fails.
-	 *
-	 * @return T
 	 */
 	public function await(?Cancellation $cancellation = null) : mixed
 	{

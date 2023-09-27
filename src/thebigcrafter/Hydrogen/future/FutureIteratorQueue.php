@@ -13,12 +13,10 @@ namespace thebigcrafter\Hydrogen\future;
 
 use thebigcrafter\Hydrogen\eventLoop\Suspension;
 
-final class FutureIteratorQueue
+class FutureIteratorQueue
 {
-	/** @var list<array{Tk, Future<Tv>}> */
 	public array $items = [];
 
-	/** @var array<string, FutureState<Tv>> */
 	public array $pending = [];
 
 	public ?Suspension $suspension = null;

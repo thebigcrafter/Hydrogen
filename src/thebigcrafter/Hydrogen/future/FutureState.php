@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace thebigcrafter\Hydrogen\future;
 
 use thebigcrafter\Hydrogen\EventLoop;
+use thebigcrafter\Hydrogen\exceptions\UnhandledFutureError;
 
-final class FutureState
+class FutureState
 {
-	// Static so they can be used as array keys
 	private static string $nextId = 'a';
 
 	private bool $complete = false;
@@ -25,7 +25,6 @@ final class FutureState
 	/** @var array<string, \Closure(?\Throwable, ?T, string): void> */
 	private array $callbacks = [];
 
-	/** @var T|null */
 	private mixed $result = null;
 
 	private ?\Throwable $throwable = null;
@@ -44,17 +43,12 @@ final class FutureState
 	 * Registers a callback to be notified once the operation is complete or errored.
 	 *
 	 * The callback is invoked directly from the event loop context, so suspension within the callback is not possible.
-	 *
-	 * @param \Closure(?\Throwable, ?T, string): void $callback Callback invoked on error / successful completion of
-	 *                                                          the future.
-	 *
-	 * @return string Identifier that can be used to cancel interest for this future.
 	 */
 	public function subscribe(\Closure $callback) : string
 	{
 		$id = self::$nextId++;
 
-		$this->handled = true; // Even if unsubscribed later, consider the future handled.
+		$this->handled = true;
 
 		if ($this->complete) {
 			EventLoop::queue($callback, $this->throwable, $this->result, $id);
@@ -69,8 +63,6 @@ final class FutureState
 	 * Cancels a subscription.
 	 *
 	 * Cancellations are advisory only. The callback might still be called if it is already queued for execution.
-	 *
-	 * @param string $id Identifier returned from subscribe()
 	 */
 	public function unsubscribe(string $id) : void
 	{
@@ -79,8 +71,6 @@ final class FutureState
 
 	/**
 	 * Completes the operation with a result value.
-	 *
-	 * @param T $result Result of the operation.
 	 */
 	public function complete(mixed $result) : void
 	{
@@ -98,8 +88,6 @@ final class FutureState
 
 	/**
 	 * Marks the operation as failed.
-	 *
-	 * @param \Throwable $throwable Throwable to indicate the error.
 	 */
 	public function error(\Throwable $throwable) : void
 	{
@@ -112,7 +100,7 @@ final class FutureState
 	}
 
 	/**
-	 * @return bool True if the operation has completed.
+	 * True if the operation has completed.
 	 */
 	public function isComplete() : bool
 	{

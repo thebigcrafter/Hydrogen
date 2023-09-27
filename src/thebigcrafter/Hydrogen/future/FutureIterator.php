@@ -18,18 +18,11 @@ use thebigcrafter\Hydrogen\trait\ForbidCloning;
 use thebigcrafter\Hydrogen\trait\ForbidSerialization;
 use function array_key_first;
 
-/**
- * @template Tk
- * @template Tv
- *
- * @internal
- */
-final class FutureIterator
+class FutureIterator
 {
 	use ForbidCloning;
 	use ForbidSerialization;
 
-	/** @var FutureIteratorQueue<Tk, Tv> */
 	private readonly FutureIteratorQueue $queue;
 
 	private readonly Cancellation $cancellation;
@@ -51,11 +44,6 @@ final class FutureIterator
 		});
 	}
 
-	/**
-	 * @param FutureState<Tv> $state
-	 * @param Tk              $key
-	 * @param Future<Tv>      $future
-	 */
 	public function enqueue(FutureState $state, mixed $key, Future $future) : void
 	{
 		if ($this->complete) {
@@ -116,9 +104,6 @@ final class FutureIterator
 		}
 	}
 
-	/**
-	 * @return null|array{Tk, Future<Tv>}
-	 */
 	public function consume() : ?array
 	{
 		if ($this->queue->suspension) {
@@ -134,7 +119,6 @@ final class FutureIterator
 
 			$this->queue->suspension = EventLoop::getSuspension();
 
-			/** @var null|array{Tk, Future<Tv>} */
 			return $this->queue->suspension->suspend();
 		}
 
@@ -143,7 +127,6 @@ final class FutureIterator
 
 		unset($this->queue->items[$key]);
 
-		/** @var null|array{Tk, Future<Tv>} */
 		return $item;
 	}
 
