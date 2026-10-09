@@ -1,4 +1,4 @@
-name: CI
+name: Run static analysis and code style checks
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   
 jobs:
   phpstan:
-    name: PHPStan analysis
+    name: Analyze PHP code with PHPStan
     runs-on: ${{ matrix.image }}
     
     strategy:
@@ -18,19 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup PHP 🐘
+      - name: Set up PHP environment
         uses: pmmp/setup-php-action@2.0.0
         with:
           php-version: ${{ matrix.php }}
           install-path: "./bin"
           pm-version-major: "5"
           
-      - name: Get Composer cache directory 📁
+      - name: Get Composer cache directory
         id: composer-cache
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache dependencies 📦
+      - name: Cache Composer dependencies
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
@@ -38,14 +38,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
             
-      - name: Install dependencies ⬇️
+      - name: Install Composer dependencies
         run: composer install --prefer-dist
         
-      - name: Run PHPStan 🔍
+      - name: Run PHPStan analysis
         run: composer run-script analyse
         
   codestyle:
-    name: Code Style checks
+    name: Check PHP code style
     runs-on: ubuntu-latest
     
     strategy:
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup PHP 🐘
+      - name: Set up PHP environment
         uses: shivammathur/setup-php@2.25.2
         with:
           php-version: 8.1
@@ -62,5 +62,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run PHP-CS-Fixer 🔍
+      - name: Check PHP code style
         run: php-cs-fixer fix --dry-run --ansi --diff
