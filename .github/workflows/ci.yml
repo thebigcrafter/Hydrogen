@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26
       
       - name: Set up PHP environment
-        uses: pmmp/setup-php-action@589cc43fddede20c8b0469828431d747fb1a1145
+        uses: pmmp/setup-php-action@3c38c259834f945351a662392836d90eb08abff0
         with:
           php-version: ${{ matrix.php }}
           install-path: "./bin"
