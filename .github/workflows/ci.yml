@@ -16,10 +16,10 @@ jobs:
         php: ["8.1"]
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26
       
       - name: Set up PHP environment
-        uses: pmmp/setup-php-action@2.0.0
+        uses: pmmp/setup-php-action@589cc43fddede20c8b0469828431d747fb1a1145
         with:
           php-version: ${{ matrix.php }}
           install-path: "./bin"
@@ -31,7 +31,7 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -52,10 +52,10 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26
 
       - name: Set up PHP environment
-        uses: shivammathur/setup-php@2.25.2
+        uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d
         with:
           php-version: 8.1
           tools: php-cs-fixer
