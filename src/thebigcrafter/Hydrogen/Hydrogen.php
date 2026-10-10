@@ -19,6 +19,7 @@ use thebigcrafter\Hydrogen\exceptions\CancelledException;
 use thebigcrafter\Hydrogen\future\Future;
 use thebigcrafter\Hydrogen\future\FutureState;
 use thebigcrafter\Hydrogen\utils\Internet;
+use function is_array;
 use function json_decode;
 use function version_compare;
 

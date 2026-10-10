@@ -16,6 +16,7 @@ use thebigcrafter\Hydrogen\exceptions\Cancellation;
 use thebigcrafter\Hydrogen\exceptions\NullCancellation;
 use thebigcrafter\Hydrogen\trait\ForbidCloning;
 use thebigcrafter\Hydrogen\trait\ForbidSerialization;
+use function array_shift;
 
 class FutureIterator
 {

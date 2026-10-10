@@ -14,6 +14,7 @@ namespace thebigcrafter\Hydrogen\tasks;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
+use function is_array;
 use function json_decode;
 use function version_compare;
 
