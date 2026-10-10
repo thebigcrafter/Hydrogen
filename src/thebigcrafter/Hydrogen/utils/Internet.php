@@ -14,18 +14,21 @@ namespace thebigcrafter\Hydrogen\utils;
 use pocketmine\utils\InternetException;
 use thebigcrafter\Hydrogen\EventLoop;
 use thebigcrafter\Hydrogen\future\DeferredFuture;
+use thebigcrafter\Hydrogen\future\Future;
 
 class Internet
 {
-	public static function fetch(string $url)
+	/** @return Future<string> */
+	public static function fetch(string $url) : Future
 	{
+		/** @var DeferredFuture<string> $deferred */
 		$deferred = new DeferredFuture();
 
-		EventLoop::defer(function () use($deferred, $url) {
+		EventLoop::defer(function () use ($deferred, $url) : void {
 			$res = \pocketmine\utils\Internet::getURL($url);
 
-			if ($res instanceof InternetException) {
-				throw $res;
+			if ($res === null) {
+				throw new InternetException("Unable to fetch {$url}");
 			}
 
 			$deferred->complete($res->getBody());

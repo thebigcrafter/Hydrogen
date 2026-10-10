@@ -23,6 +23,7 @@ class FutureIterator
 	use ForbidCloning;
 	use ForbidSerialization;
 
+	/** @var FutureIteratorQueue<mixed> */
 	private readonly FutureIteratorQueue $queue;
 
 	private readonly Cancellation $cancellation;
@@ -44,6 +45,10 @@ class FutureIterator
 		});
 	}
 
+	/**
+	 * @param FutureState<mixed> $state
+	 * @param Future<mixed>      $future
+	 */
 	public function enqueue(FutureState $state, mixed $key, Future $future) : void
 	{
 		if ($this->complete) {
@@ -52,9 +57,7 @@ class FutureIterator
 
 		$queue = $this->queue; // Using separate object to avoid a circular reference.
 
-		/**
-		 * @param Tv|null $result
-		 */
+		/** @var FutureIteratorQueue<mixed> $queue */
 		$handler = static function (?\Throwable $error, mixed $result, string $id) use (
 			$key,
 			$future,
@@ -104,6 +107,7 @@ class FutureIterator
 		}
 	}
 
+	/** @return array{0: mixed, 1: Future<mixed>}|null */
 	public function consume() : ?array
 	{
 		if ($this->queue->suspension) {
@@ -112,14 +116,18 @@ class FutureIterator
 
 		if (!$this->queue->items) {
 			if ($this->complete && !$this->queue->pending) {
-				return $this->complete->await();
+				/** @var array{0: mixed, 1: Future<mixed>}|null $result */
+				$result = $this->complete->await();
+				return $result;
 			}
 
 			$this->cancellation->throwIfRequested();
 
 			$this->queue->suspension = EventLoop::getSuspension();
 
-			return $this->queue->suspension->suspend();
+			/** @var array{0: mixed, 1: Future<mixed>}|null $result */
+			$result = $this->queue->suspension->suspend();
+			return $result;
 		}
 
 		$key = array_key_first($this->queue->items);

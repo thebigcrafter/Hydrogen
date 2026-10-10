@@ -35,10 +35,13 @@ class Hydrogen
 		$highestVersion = $plugin->getDescription()->getVersion();
 		$artifactUrl = "";
 
+		$res = "";
 		try {
+			/** @var string $res */
 			$res = Internet::fetch("https://poggit.pmmp.io/releases.min.json?name=" . $plugin->getName())->await();
 		} catch (InternetException $e) {
-			Server::getInstance()->getLogger()->debug($e);
+			Server::getInstance()->getLogger()->debug($e->getMessage());
+			$res = "";
 		}
 
 		$releases = (array) json_decode($res, true);
@@ -68,6 +71,7 @@ class Hydrogen
 	 * Creates a new fiber asynchronously using the given closure, returning a Future that is completed with the
 	 * eventual return value of the passed function or will fail if the closure throws an exception.
 	 */
+	/** @return Future<mixed> */
 	public static function async(\Closure $closure, mixed ...$args) : Future
 	{
 		static $run = null;
@@ -116,8 +120,9 @@ class Hydrogen
 		} finally {
 			EventLoop::cancel($callbackId);
 
-			/** @psalm-suppress PossiblyNullArgument $cancellationId will not be null if $cancellation is not null. */
-			$cancellation?->unsubscribe($cancellationId);
+			if ($cancellation !== null && $cancellationId !== null) {
+				$cancellation->unsubscribe($cancellationId);
+			}
 		}
 	}
 }

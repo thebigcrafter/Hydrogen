@@ -8,8 +8,13 @@
     "pocketmine/pocketmine-mp": "^5.0"
   },
   "require-dev": {
-    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan": "^1.12",
     "friendsofphp/php-cs-fixer": "^3.17"
+  },
+  "config": {
+    "platform": {
+      "php": "8.1"
+    }
   },
   "license": "Apache-2.0",
   "autoload": {

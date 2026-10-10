@@ -14,6 +14,9 @@ namespace thebigcrafter\Hydrogen\future;
 use thebigcrafter\Hydrogen\EventLoop;
 use thebigcrafter\Hydrogen\exceptions\UnhandledFutureError;
 
+/**
+ * @template T
+ */
 class FutureState
 {
 	private static string $nextId = 'a';
@@ -25,6 +28,7 @@ class FutureState
 	/** @var array<string, \Closure(?\Throwable, ?T, string): void> */
 	private array $callbacks = [];
 
+	/** @var T|null */
 	private mixed $result = null;
 
 	private ?\Throwable $throwable = null;
@@ -72,6 +76,7 @@ class FutureState
 	/**
 	 * Completes the operation with a result value.
 	 */
+	/** @param T|null $result */
 	public function complete(mixed $result) : void
 	{
 		if ($this->complete) {

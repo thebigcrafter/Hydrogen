@@ -14,13 +14,18 @@ namespace thebigcrafter\Hydrogen\future;
 use thebigcrafter\Hydrogen\trait\ForbidCloning;
 use thebigcrafter\Hydrogen\trait\ForbidSerialization;
 
+/**
+ * @template T
+ */
 class DeferredFuture
 {
 	use ForbidCloning;
 	use ForbidSerialization;
 
+	/** @var FutureState<T> */
 	private readonly FutureState $state;
 
+	/** @var Future<T> */
 	private readonly Future $future;
 
 	public function __construct()
@@ -32,7 +37,7 @@ class DeferredFuture
 	/**
 	 * Completes the operation with a result value.
 	 *
-	 * @param T $value Result of the operation.
+	 * @param T|null $value Result of the operation.
 	 */
 	public function complete(mixed $value = null) : void
 	{

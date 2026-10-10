@@ -19,8 +19,8 @@ interface Cancellation
 	 * This handler might be invoked immediately in case the cancellation has already been requested. Any unhandled
 	 * exceptions will be thrown into the event loop.
 	 *
-	 * @param \Closure(CancelledException) $callback Callback to be invoked on a cancellation request. Will receive a
-	 *                                               `CancelledException` as first argument that may be used to fail the operation.
+	 * @param \Closure $callback Callback to be invoked on a cancellation request. Will receive a
+	 *                           `CancelledException` as first argument that may be used to fail the operation.
 	 *
 	 * @return string Identifier that can be used to cancel the subscription.
 	 */

@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         image: [ubuntu-latest]
-        php: ["8.1"]
+        php: ["8.2"]
     
     steps:
       - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26
@@ -57,7 +57,7 @@ jobs:
       - name: Set up PHP environment
         uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d
         with:
-          php-version: 8.1
+          php-version: 8.2
           tools: php-cs-fixer
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace thebigcrafter\Hydrogen\eventLoop\Internal;
 
-/** @internal */
+/**
+ * @internal
+ */
 final class ClosureHelper
 {
 	public static function getDescription(\Closure $closure) : string
