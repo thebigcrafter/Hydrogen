@@ -40,9 +40,7 @@ final class Future
 
 		if (is_array($futures)) {
 			foreach ($futures as $key => $future) {
-				if (!$future instanceof self) {
-					throw new \TypeError('Array must only contain instances of ' . self::class);
-				}
+				$future = self::validateFuture($future, 'Array must only contain instances of ' . self::class);
 				$iterator->enqueue($future->state, $key, $future);
 			}
 			$iterator->complete();
@@ -50,9 +48,7 @@ final class Future
 			EventLoop::queue(static function () use ($futures, $iterator) : void {
 				try {
 					foreach ($futures as $key => $future) {
-						if (!$future instanceof self) {
-							throw new \TypeError('Iterable must only provide instances of ' . self::class);
-						}
+						$future = self::validateFuture($future, 'Iterable must only provide instances of ' . self::class);
 						$iterator->enqueue($future->state, $key, $future);
 					}
 					$iterator->complete();
@@ -66,6 +62,16 @@ final class Future
 			/** @var array{0: TKey, 1: self<TValue>} $item */
 			yield $item[0] => $item[1];
 		}
+	}
+
+	/** @return self<mixed> */
+	private static function validateFuture(mixed $future, string $message) : self
+	{
+		if (!$future instanceof self) {
+			throw new \TypeError($message);
+		}
+
+		return $future;
 	}
 
 	/**

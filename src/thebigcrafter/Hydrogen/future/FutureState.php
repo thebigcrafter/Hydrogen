@@ -33,12 +33,10 @@ class FutureState
 
 	private ?\Throwable $throwable = null;
 
-	private ?string $origin = null;
-
 	public function __destruct()
 	{
 		if ($this->throwable && !$this->handled) {
-			$throwable = new UnhandledFutureError($this->throwable, $this->origin);
+			$throwable = new UnhandledFutureError($this->throwable);
 			EventLoop::queue(static fn () => throw $throwable);
 		}
 	}

@@ -28,8 +28,8 @@ class CheckUpdatesTask extends AsyncTask {
 		$artifactUrl = "";
 
 		if ($res !== null) {
-			$releases = (array) json_decode($res->getBody(), true);
-			if ($releases !== null) {
+			$releases = json_decode($res->getBody(), true);
+			if (is_array($releases)) {
 				/**
 				 * @var array{'version': string, 'artifact_url': string} $release
 				 */

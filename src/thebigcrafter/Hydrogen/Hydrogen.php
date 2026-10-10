@@ -44,9 +44,9 @@ class Hydrogen
 			$res = "";
 		}
 
-		$releases = (array) json_decode($res, true);
+		$releases = json_decode($res, true);
 
-		if ($releases !== null) {
+		if (is_array($releases)) {
 			/**
 			 * @var array{'version': string, 'artifact_url': string} $release
 			 */
@@ -74,9 +74,7 @@ class Hydrogen
 	/** @return Future<mixed> */
 	public static function async(\Closure $closure, mixed ...$args) : Future
 	{
-		static $run = null;
-
-		$run ??= static function (FutureState $state, \Closure $closure, array $args) : void {
+		$run = static function (FutureState $state, \Closure $closure, array $args) : void {
 			$s = $state;
 			$c = $closure;
 

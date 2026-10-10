@@ -16,7 +16,6 @@ use thebigcrafter\Hydrogen\exceptions\Cancellation;
 use thebigcrafter\Hydrogen\exceptions\NullCancellation;
 use thebigcrafter\Hydrogen\trait\ForbidCloning;
 use thebigcrafter\Hydrogen\trait\ForbidSerialization;
-use function array_key_first;
 
 class FutureIterator
 {
@@ -130,12 +129,7 @@ class FutureIterator
 			return $result;
 		}
 
-		$key = array_key_first($this->queue->items);
-		$item = $this->queue->items[$key];
-
-		unset($this->queue->items[$key]);
-
-		return $item;
+		return array_shift($this->queue->items);
 	}
 
 	public function __destruct()
