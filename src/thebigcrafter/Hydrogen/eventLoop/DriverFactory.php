@@ -58,6 +58,7 @@ final class DriverFactory
 		return $driver;
 	}
 
+	/** @devtools-allow-dynamic-class $driver */
 	private function createDriverFromEnv() : ?Driver
 	{
 		$driver = getenv("REVOLT_DRIVER");

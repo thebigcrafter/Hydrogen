@@ -53,6 +53,8 @@ The GitHub Actions workflow runs PHPStan and the PHP code-style check. The proje
 
 The repository's build configuration uses DevTools to package and validate the Virion library. The exact tool reference is maintained by the build service; user documentation intentionally describes the tool by function instead of copying a build revision that may change independently of Hydrogen.
 
+Hydrogen's optional `REVOLT_DRIVER` path is deliberately guarded: the selected class must be confirmed with `class_exists()` and `is_subclass_of()` before it is instantiated. The same explicit contract is used for internal callback-class inspection. This keeps the runtime selection visible to packaging and static checks without changing the public API.
+
 ## Compatibility and maintenance
 
 Hydrogen targets the PHP and PocketMine-MP API ranges declared in `composer.json` and `virion.yml`. Check those manifests for the current compatibility contract. The repository uses Dependabot for Composer and GitHub Actions updates; review updates for API and runtime compatibility before merging them.

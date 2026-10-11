@@ -13,6 +13,7 @@ namespace thebigcrafter\Hydrogen\exceptions;
 
 class UnhandledFutureError extends \Error
 {
+	/** @devtools-allow-dynamic-class $previous */
 	public function __construct(\Throwable $previous, ?string $origin = null)
 	{
 		$message = 'Unhandled future: ' . $previous::class . ': "' . $previous->getMessage()
