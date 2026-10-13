@@ -19,6 +19,7 @@ use thebigcrafter\Hydrogen\exceptions\CancelledException;
 use thebigcrafter\Hydrogen\future\Future;
 use thebigcrafter\Hydrogen\future\FutureState;
 use thebigcrafter\Hydrogen\utils\Internet;
+use function is_array;
 use function json_decode;
 use function version_compare;
 
@@ -35,15 +36,18 @@ class Hydrogen
 		$highestVersion = $plugin->getDescription()->getVersion();
 		$artifactUrl = "";
 
+		$res = "";
 		try {
+			/** @var string $res */
 			$res = Internet::fetch("https://poggit.pmmp.io/releases.min.json?name=" . $plugin->getName())->await();
 		} catch (InternetException $e) {
-			Server::getInstance()->getLogger()->debug($e);
+			Server::getInstance()->getLogger()->debug($e->getMessage());
+			$res = "";
 		}
 
-		$releases = (array) json_decode($res, true);
+		$releases = json_decode($res, true);
 
-		if ($releases !== null) {
+		if (is_array($releases)) {
 			/**
 			 * @var array{'version': string, 'artifact_url': string} $release
 			 */
@@ -68,11 +72,10 @@ class Hydrogen
 	 * Creates a new fiber asynchronously using the given closure, returning a Future that is completed with the
 	 * eventual return value of the passed function or will fail if the closure throws an exception.
 	 */
+	/** @return Future<mixed> */
 	public static function async(\Closure $closure, mixed ...$args) : Future
 	{
-		static $run = null;
-
-		$run ??= static function (FutureState $state, \Closure $closure, array $args) : void {
+		$run = static function (FutureState $state, \Closure $closure, array $args) : void {
 			$s = $state;
 			$c = $closure;
 
@@ -116,8 +119,9 @@ class Hydrogen
 		} finally {
 			EventLoop::cancel($callbackId);
 
-			/** @psalm-suppress PossiblyNullArgument $cancellationId will not be null if $cancellation is not null. */
-			$cancellation?->unsubscribe($cancellationId);
+			if ($cancellation !== null && $cancellationId !== null) {
+				$cancellation->unsubscribe($cancellationId);
+			}
 		}
 	}
 }

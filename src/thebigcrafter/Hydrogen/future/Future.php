@@ -17,6 +17,9 @@ use thebigcrafter\Hydrogen\trait\ForbidCloning;
 use thebigcrafter\Hydrogen\trait\ForbidSerialization;
 use function is_array;
 
+/**
+ * @template T
+ */
 final class Future
 {
 	use ForbidCloning;
@@ -25,15 +28,19 @@ final class Future
 	/**
 	 * Iterate over the given futures in completion order.
 	 */
+	/**
+	 * @template TKey
+	 * @template TValue
+	 * @param iterable<TKey, self<TValue>> $futures
+	 * @return iterable<TKey, self<TValue>>
+	 */
 	public static function iterate(iterable $futures, ?Cancellation $cancellation = null) : iterable
 	{
 		$iterator = new FutureIterator($cancellation);
 
 		if (is_array($futures)) {
 			foreach ($futures as $key => $future) {
-				if (!$future instanceof self) {
-					throw new \TypeError('Array must only contain instances of ' . self::class);
-				}
+				$future = self::validateFuture($future, 'Array must only contain instances of ' . self::class);
 				$iterator->enqueue($future->state, $key, $future);
 			}
 			$iterator->complete();
@@ -41,9 +48,7 @@ final class Future
 			EventLoop::queue(static function () use ($futures, $iterator) : void {
 				try {
 					foreach ($futures as $key => $future) {
-						if (!$future instanceof self) {
-							throw new \TypeError('Iterable must only provide instances of ' . self::class);
-						}
+						$future = self::validateFuture($future, 'Iterable must only provide instances of ' . self::class);
 						$iterator->enqueue($future->state, $key, $future);
 					}
 					$iterator->complete();
@@ -54,12 +59,29 @@ final class Future
 		}
 
 		while ($item = $iterator->consume()) {
+			/** @var array{0: TKey, 1: self<TValue>} $item */
 			yield $item[0] => $item[1];
 		}
 	}
 
+	/** @return self<mixed> */
+	private static function validateFuture(mixed $future, string $message) : self
+	{
+		if (!$future instanceof self) {
+			throw new \TypeError($message);
+		}
+
+		return $future;
+	}
+
+	/**
+	 * @template TValue
+	 * @param TValue $value
+	 * @return self<TValue>
+	 */
 	public static function complete(mixed $value = null) : self
 	{
+		/** @var FutureState<TValue> $state */
 		$state = new FutureState();
 		$state->complete($value);
 
@@ -69,6 +91,7 @@ final class Future
 	/**
 	 * @return Future<never>
 	 */
+	/** @return self<never> */
 	public static function error(\Throwable $throwable) : self
 	{
 		/** @var FutureState<never> $state */
@@ -78,8 +101,10 @@ final class Future
 		return new self($state);
 	}
 
+	/** @var FutureState<T> */
 	private readonly FutureState $state;
 
+	/** @param FutureState<T> $state */
 	public function __construct(FutureState $state)
 	{
 		$this->state = $state;
@@ -96,6 +121,7 @@ final class Future
 	/**
 	 * Do not forward unhandled errors to the event loop handler.
 	 */
+	/** @return self<T> */
 	public function ignore() : self
 	{
 		$this->state->ignore();
@@ -107,8 +133,14 @@ final class Future
 	 * Attaches a callback that is invoked if this future completes. The returned future is completed with the return
 	 * value of the callback, or errors with an exception thrown from the callback.
 	 */
+	/**
+	 * @template U
+	 * @param \Closure(T): U $map
+	 * @return self<U>
+	 */
 	public function map(\Closure $map) : self
 	{
+		/** @var FutureState<U> $state */
 		$state = new FutureState();
 
 		$this->state->subscribe(static function (?\Throwable $error, mixed $value) use ($state, $map) : void {
@@ -132,8 +164,14 @@ final class Future
 	 * Attaches a callback that is invoked if this future errors. The returned future is completed with the return
 	 * value of the callback, or errors with an exception thrown from the callback.
 	 */
+	/**
+	 * @template U
+	 * @param \Closure(\Throwable): U $catch
+	 * @return self<T|U>
+	 */
 	public function catch(\Closure $catch) : self
 	{
+		/** @var FutureState<T|U> $state */
 		$state = new FutureState();
 
 		$this->state->subscribe(static function (?\Throwable $error, mixed $value) use ($state, $catch) : void {
@@ -157,8 +195,10 @@ final class Future
 	 * same value as this future once the callback has finished execution. If the callback throws, the returned future
 	 * will error with the thrown exception.
 	 */
+	/** @return self<T> */
 	public function finally(\Closure $finally) : self
 	{
+		/** @var FutureState<T> $state */
 		$state = new FutureState();
 
 		$this->state->subscribe(static function (?\Throwable $error, mixed $value) use ($state, $finally) : void {
@@ -212,8 +252,9 @@ final class Future
 		try {
 			return $suspension->suspend();
 		} finally {
-			/** @psalm-suppress PossiblyNullArgument $cancellationId will not be null if $cancellation is not null. */
-			$cancellation?->unsubscribe($cancellationId);
+			if ($cancellation !== null && $cancellationId !== null) {
+				$cancellation->unsubscribe($cancellationId);
+			}
 		}
 	}
 }

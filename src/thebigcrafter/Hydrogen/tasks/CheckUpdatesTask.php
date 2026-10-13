@@ -14,6 +14,7 @@ namespace thebigcrafter\Hydrogen\tasks;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
+use function is_array;
 use function json_decode;
 use function version_compare;
 
@@ -28,8 +29,8 @@ class CheckUpdatesTask extends AsyncTask {
 		$artifactUrl = "";
 
 		if ($res !== null) {
-			$releases = (array) json_decode($res->getBody(), true);
-			if ($releases !== null) {
+			$releases = json_decode($res->getBody(), true);
+			if (is_array($releases)) {
 				/**
 				 * @var array{'version': string, 'artifact_url': string} $release
 				 */

@@ -348,6 +348,7 @@ abstract class AbstractDriver implements Driver
 		return array_keys($this->callbacks);
 	}
 
+	/** @devtools-allow-dynamic-class $callback */
 	public function getType(string $callbackId) : CallbackType
 	{
 		$callback = $this->callbacks[$callbackId] ?? throw InvalidCallbackError::invalidIdentifier($callbackId);

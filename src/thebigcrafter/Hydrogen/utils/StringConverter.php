@@ -28,10 +28,6 @@ class StringConverter {
 			throw new HException("Item not found!");
 		}
 
-		if(!$item instanceof Item) {
-			throw new HException("Not an item!");
-		}
-
 		return $item;
 	}
 

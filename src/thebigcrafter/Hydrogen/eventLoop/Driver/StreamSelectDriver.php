@@ -39,6 +39,7 @@ use function stripos;
 use function usleep;
 use const DIRECTORY_SEPARATOR;
 use const PHP_INT_MAX;
+use const SIG_DFL;
 
 final class StreamSelectDriver extends AbstractDriver
 {
