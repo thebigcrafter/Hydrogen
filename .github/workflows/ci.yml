@@ -43,6 +43,9 @@ jobs:
         
       - name: Run PHPStan analysis
         run: composer run-script analyse
+
+      - name: Run Hydrogen runtime tests
+        run: composer run-script test
         
   codestyle:
     name: Check PHP code style

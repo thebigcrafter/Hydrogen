@@ -46,10 +46,11 @@ Install the development dependencies and run the repository checks:
 ```text
 composer install
 composer run-script analyse
+composer run-script test
 vendor/bin/php-cs-fixer fix --dry-run --ansi --diff
 ```
 
-The GitHub Actions workflow runs PHPStan and the PHP code-style check. The project does not currently include a dedicated runtime test suite, so passing static and style checks does not by itself prove every event-loop driver works on every host.
+The GitHub Actions workflow runs the Hydrogen runtime regression test, PHPStan, and the PHP code-style check. The runtime test covers the Future error-propagation contract used by asynchronous network checks; passing it does not by itself prove every event-loop driver works on every host.
 
 The repository's build configuration uses DevTools to package and validate the Virion library. The exact tool reference is maintained by the build service; user documentation intentionally describes the tool by function instead of copying a build revision that may change independently of Hydrogen.
 

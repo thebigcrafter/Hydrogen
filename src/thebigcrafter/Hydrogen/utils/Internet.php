@@ -25,13 +25,17 @@ class Internet
 		$deferred = new DeferredFuture();
 
 		EventLoop::defer(function () use ($deferred, $url) : void {
-			$res = \pocketmine\utils\Internet::getURL($url);
+			try {
+				$res = \pocketmine\utils\Internet::getURL($url);
 
-			if ($res === null) {
-				throw new InternetException("Unable to fetch {$url}");
+				if ($res === null) {
+					throw new InternetException("Unable to fetch {$url}");
+				}
+
+				$deferred->complete($res->getBody());
+			} catch (\Throwable $exception) {
+				$deferred->error($exception);
 			}
-
-			$deferred->complete($res->getBody());
 		});
 
 		return $deferred->getFuture();

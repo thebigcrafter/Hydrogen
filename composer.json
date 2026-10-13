@@ -29,7 +29,8 @@
   ],
   "scripts": {
     "fix-cs": "./vendor/bin/php-cs-fixer fix",
-    "analyse": "./vendor/bin/phpstan analyse"
+    "analyse": "./vendor/bin/phpstan analyse",
+    "test": "php tests/InternetTest.php"
   },
   "extra": {
     "virion": {
