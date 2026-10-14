@@ -12,14 +12,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [ubuntu-latest]
+        image: [ubuntu-24.04]
         php: ["8.2"]
     
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
       
       - name: Set up PHP environment
-        uses: pmmp/setup-php-action@3c38c259834f945351a662392836d90eb08abff0
+        uses: pmmp/setup-php-action@e031917a35223b96cba12fe19ace0765c91f6bfb
         with:
           php-version: ${{ matrix.php }}
           install-path: "./bin"
@@ -31,7 +31,7 @@ jobs:
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        uses: actions/cache@3edfce9056124e459a23f683a21433670d47daca
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -49,16 +49,16 @@ jobs:
         
   codestyle:
     name: Check PHP code style
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     
     strategy:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
 
       - name: Set up PHP environment
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        uses: shivammathur/setup-php@5a89ae6dd61c772780c51d7542f4374d76990a0b
         with:
           php-version: 8.2
           tools: php-cs-fixer
