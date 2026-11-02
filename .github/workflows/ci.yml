@@ -3,28 +3,28 @@ name: Run static analysis and code style checks
 on:
   push:
   pull_request:
-  
+
 jobs:
   phpstan:
     name: Analyze PHP code with PHPStan
     runs-on: ${{ matrix.image }}
-    
+
     strategy:
       fail-fast: false
       matrix:
         image: [ubuntu-24.04]
         php: ["8.2"]
-    
+
     steps:
       - uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a
-      
+
       - name: Set up PHP environment
         uses: pmmp/setup-php-action@e031917a35223b96cba12fe19ace0765c91f6bfb
         with:
           php-version: ${{ matrix.php }}
           install-path: "./bin"
           pm-version-major: "5"
-          
+
       - name: Get Composer cache directory
         id: composer-cache
         run: |
@@ -37,20 +37,20 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-            
+
       - name: Install Composer dependencies
         run: composer install --prefer-dist
-        
+
       - name: Run PHPStan analysis
         run: composer run-script analyse
 
       - name: Run Hydrogen runtime tests
         run: composer run-script test
-        
+
   codestyle:
     name: Check PHP code style
     runs-on: ubuntu-24.04
-    
+
     strategy:
       fail-fast: false
 
