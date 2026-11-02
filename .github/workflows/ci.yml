@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist
+        run: composer install --prefer-dist --ignore-platform-req=ext-webrtc
 
       - name: Run PHPStan analysis
         run: composer run-script analyse
